@@ -19,22 +19,23 @@ public class MySQLAccess {
       	 String DBURL = "jdbc:mysql://" + System.getenv("DBHOST") + "/db100035?user="+System.getenv("DBUSER")+"&password="+System.getenv("DBPASSWORD");
       	 System.out.println("JDBC MYSQL Connection:" + DBURL  );
            // This will load the MySQL driver, each DB has its own driver
-           Class.forName("com.mysql.jdbc.Driver");
+           Class.forName("com.mysql.cj.jdbc.Driver");            //loading driver
            // Setup the connection with the DB
            connect = DriverManager
-                   .getConnection(DBURL);
+                   .getConnection(DBURL);               //setting connection
 
            // Statements allow to issue SQL queries to the database
-           statement = connect.createStatement();
+           statement = connect.createStatement();                  
            // Result set get the result of the SQL query
            resultSet = statement
-                   .executeQuery("select * from comments");
+                   .executeQuery("select * from comments");             //executing query
+           System.out.println("#######");
            writeResultSet(resultSet);
-
+           System.out.println("#######");
            // PreparedStatements can use variables and are more efficient
            preparedStatement = connect
                    .prepareStatement("insert into  db100035.comments values (default, ?, ?, ?, ? , ?, ?)");
-           // "muuser, webpage, datum, summary, COMMENTS from db100035.comments");
+           // "myuser, webpage, datum, summary, COMMENTS from db100035.comments");
            // Parameters start with 1
            preparedStatement.setString(1, "Test");
            preparedStatement.setString(2, "TestEmail");
@@ -44,14 +45,15 @@ public class MySQLAccess {
            preparedStatement.setString(6, "TestComment");
            preparedStatement.executeUpdate();
 
+           System.out.println("****************");
            preparedStatement = connect
-                   .prepareStatement("SELECT muuser, webpage, datum, summary, COMMENTS from db100035.comments");
+                   .prepareStatement("SELECT myuser, webpage, datum, summary, COMMENTS from db100035.comments");
            resultSet = preparedStatement.executeQuery();
            writeResultSet(resultSet);
-
+           System.out.println("****************");
            // Remove again the insert comment
            preparedStatement = connect
-           .prepareStatement("delete from db100035.comments where muuser= ? ; ");
+           .prepareStatement("delete from db100035.comments where myuser= ? ; ");
            preparedStatement.setString(1, "Test");
            preparedStatement.executeUpdate();
 
@@ -75,7 +77,9 @@ public class MySQLAccess {
 
        System.out.println("Table: " + resultSet.getMetaData().getTableName(1));
        for  (int i = 1; i<= resultSet.getMetaData().getColumnCount(); i++){
-           System.out.println("Column " +i  + " "+ resultSet.getMetaData().getColumnName(i));
+      	 //String columnName=resultSet.getMetaData().getColumnName(i);
+          System.out.println("Column " +i  + " "+ resultSet.getMetaData().getColumnName(i));
+           //System.out.println("data : "+resultSet.getString("User"));
        }
    }
 
@@ -86,7 +90,7 @@ public class MySQLAccess {
            // also possible to get the columns via the column number
            // which starts at 1
            // e.g. resultSet.getSTring(2);
-           String user = resultSet.getString("muuser");
+           String user = resultSet.getString("myuser");
            String website = resultSet.getString("webpage");
            String summary = resultSet.getString("summary");
            Date date = resultSet.getDate("datum");
